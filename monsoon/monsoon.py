@@ -351,6 +351,7 @@ def main(argv):
     mon.StopDataCollection()
     status = mon.GetStatus()
     native_hz = status["sampleRate"] * 1000
+    print('zhuang >>> native_hz: %d' % native_hz)
 
     # Collect and average samples as specified
     mon.StartDataCollection()
@@ -361,12 +362,16 @@ def main(argv):
     emitted = offset = 0
     collected = []
     history_deque = collections.deque() # past n samples for rolling average
+    total_history_deque = collections.deque() # past n samples for rolling average
+    print "zhuang >>> len(history_deque) %d" % len(history_deque)
 
     try:
       last_flush = time.time()
+      print "zhuang >>> collected %d" % len(collected)
       while emitted < FLAGS.samples or FLAGS.samples == -1:
         # The number of raw samples to consume before emitting the next output
         need = (native_hz - offset + FLAGS.hz - 1) / FLAGS.hz
+     #   print "zhuang >>> collected %d need=%d emitted=%d" %(len(collected),need,emitted)
         if need > len(collected):     # still need more input samples
           samples = mon.CollectData()
           if not samples: break
@@ -374,16 +379,24 @@ def main(argv):
         else:
           # Have enough data, generate output samples.
           # Adjust for consuming 'need' input samples.
+          # print "zhuang >>> collected %d need=%d emitted=%d offset=%d FLAGS.samples=%d FLAGS.hz=%d" %(len(collected),need,emitted,offset,FLAGS.samples,FLAGS.hz)
           offset += need * FLAGS.hz
+          # print "zhuang >>> collected %d need=%d emitted=%d offset=%d FLAGS.samples=%d FLAGS.hz=%d" %(len(collected),need,emitted,offset,FLAGS.samples,FLAGS.hz)
           while offset >= native_hz:  # maybe multiple, if FLAGS.hz > native_hz
             this_sample = sum(collected[:need]) / need
+            total_history_deque.appendleft(this_sample)
+            print "22 this_sample=%f [sum=%f/need=%d]" %(this_sample, sum(collected[:need]), need)
 
-            if FLAGS.timestamp: print int(time.time()),
+            # if FLAGS.timestamp: print int(time.time()),
+            if FLAGS.timestamp: print time.time(),
+            if FLAGS.timestamp: print time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())),
+            if FLAGS.timestamp: print ",",
 
             if FLAGS.avg:
               history_deque.appendleft(this_sample)
               if len(history_deque) > FLAGS.avg: history_deque.pop()
-              print "%f %f" % (this_sample,
+              print "zhuang >>> len(history_deque) %d" % len(history_deque)
+              print "%f --- %f" % (this_sample,
                                sum(history_deque) / len(history_deque))
             else:
               print "%f" % this_sample
@@ -392,14 +405,18 @@ def main(argv):
             offset -= native_hz
             emitted += 1              # adjust for emitting 1 output sample
           collected = collected[need:]
+          print "zhuang  <<<  >>> collected %d" % len(collected)
           now = time.time()
           if now - last_flush >= 0.99:  # flush every second
             sys.stdout.flush()
             last_flush = now
+          print "\n"
     except KeyboardInterrupt:
       print >>sys.stderr, "interrupted"
 
     mon.StopDataCollection()
+    print "zhuang >>> iiiiiiiilen(total_history_deque) %d" % len(total_history_deque)
+    print " --- %f" % (sum(total_history_deque) / len(total_history_deque))
 
 
 if __name__ == '__main__':
