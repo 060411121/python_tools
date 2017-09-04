@@ -64,36 +64,59 @@ def parse_info(cpu, idle, total):
         cpu_idle_bak = idle
         cpu_total_bak = total
     if cmp(cpu, "cpu0") == 0:
-        cpu0_usage = 100 - (idle-cpu0_idle_bak)*100/(total-cpu0_total_bak)
+        if(total- cpu0_total_bak):
+            cpu0_usage = 100 - (idle-cpu0_idle_bak)*100/(total-cpu0_total_bak)
+        else:
+            cpu0_usage = -1
         cpu0_idle_bak = idle
         cpu0_total_bak = total
     if cmp(cpu, "cpu1") == 0:
-        cpu1_usage = 100 - (idle-cpu1_idle_bak)*100/(total-cpu1_total_bak)
+        if(total- cpu1_total_bak):
+            cpu1_usage = 100 - (idle-cpu1_idle_bak)*100/(total-cpu1_total_bak)
+        else:
+            cpu1_usage = -1
         cpu1_idle_bak = idle
         cpu1_total_bak = total
     if cmp(cpu, "cpu2") == 0:
-        cpu2_usage = 100 - (idle-cpu2_idle_bak)*100/(total-cpu2_total_bak)
+        if(total- cpu2_total_bak):
+            cpu2_usage = 100 - (idle-cpu2_idle_bak)*100/(total-cpu2_total_bak)
+        else:
+            cpu2_usage = -1
         cpu2_idle_bak = idle
         cpu2_total_bak = total
     if cmp(cpu, "cpu3") == 0:
-        cpu3_usage = 100 - (idle-cpu3_idle_bak)*100/(total-cpu3_total_bak)
+        if(total- cpu3_total_bak):
+            cpu3_usage = 100 - (idle-cpu3_idle_bak)*100/(total-cpu3_total_bak)
+        else:
+            cpu3_usage = -1
         cpu3_idle_bak = idle
         cpu3_total_bak = total
     if cmp(cpu, "cpu4") == 0:
-        cpu4_usage = 100 - (idle-cpu4_idle_bak)*100/(total-cpu4_total_bak)
+        if(total- cpu4_total_bak):
+            cpu4_usage = 100 - (idle-cpu4_idle_bak)*100/(total-cpu4_total_bak)
+        else:
+            cpu4_usage = -1
         cpu4_idle_bak = idle
         cpu4_total_bak = total
     if cmp(cpu, "cpu5") == 0:
-        cpu5_usage = 100 - (idle-cpu5_idle_bak)*100/(total-cpu5_total_bak)
+        if(total- cpu5_total_bak):
+            cpu5_usage = 100 - (idle-cpu5_idle_bak)*100/(total-cpu5_total_bak)
+        else:
+            cpu5_usage = -1
         cpu5_idle_bak = idle
         cpu5_total_bak = total
     if cmp(cpu, "cpu6") == 0:
-        cpu6_usage = 100 - (idle-cpu6_idle_bak)*100/(total-cpu6_total_bak)
+        if(total- cpu6_total_bak):
+            cpu6_usage = 100 - (idle-cpu6_idle_bak)*100/(total-cpu6_total_bak)
+        else:
+            cpu6_usage = -1
         cpu6_idle_bak = idle
         cpu6_total_bak = total
     if cmp(cpu, "cpu7") == 0:
-        cpu7_usage = 100 - (idle-cpu7_idle_bak)*100/(total-cpu7_total_bak)
-        print "%2d%%," %(cpu7_usage),
+        if(total- cpu7_total_bak):
+            cpu7_usage = 100 - (idle-cpu7_idle_bak)*100/(total-cpu7_total_bak)
+        else:
+            cpu7_usage = -1
         cpu7_idle_bak = idle
         cpu7_total_bak = total
 
@@ -182,6 +205,7 @@ def usage():
 #time.sleep(1)
 x=[]
 y=[]
+y_100=[]
 y_0=[]
 y_1=[]
 y_2=[]
@@ -235,6 +259,7 @@ if parse_all:
             if show_ui:
                 x.append(i)
                 y.append(cpu_usage)
+                y_100.append(100)
                 y_0.append(cpu0_usage)
                 y_1.append(cpu1_usage)
                 y_2.append(cpu2_usage)
@@ -246,6 +271,7 @@ if parse_all:
                 if len(x) > ui_sample: 
                     x.pop(0)
                     y.pop(0)
+                    y_100.pop(0)
                     y_0.pop(0)
                     y_1.pop(0)
                     y_2.pop(0)
@@ -265,6 +291,7 @@ if parse_all:
                 ax7.cla()
                 ax.set_title(device)
                 ax.plot(x, y, 'b')
+                ax.plot(x, y_100, 'r')
                 ax0.plot(x, y_0, 'b')
                 ax1.plot(x, y_1, 'b')
                 ax2.plot(x, y_2, 'b')
