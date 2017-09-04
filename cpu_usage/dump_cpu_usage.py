@@ -245,10 +245,9 @@ if __name__ == "__main__":
 
 if show_ui:
     print "showUI"
-    fig, (ax,ax0,ax1,ax2,ax3,ax4,ax5,ax6,ax7) = plt.subplots(9, 1, sharey=True)
+    fig, (ax1,ax2) = plt.subplots(1, 2, sharey=True)
     plt.ion()
 if parse_all:
-	# Dump PM8998 LDO info.
         device = get_device_info_from_adb()
         print "hshdhah%s" %device
         print "%19s, cpu,cpu0,cpu1,cpu2,cpu3,cpu4,cpu5,cpu6,cpu7" %"time"
@@ -280,26 +279,25 @@ if parse_all:
                     y_5.pop(0)
                     y_6.pop(0)
                     y_7.pop(0)
-                ax.cla()
-                ax0.cla()
                 ax1.cla()
                 ax2.cla()
-                ax3.cla()
-                ax4.cla()
-                ax5.cla()
-                ax6.cla()
-                ax7.cla()
-                ax.set_title(device)
-                ax.plot(x, y, 'b')
-                ax.plot(x, y_100, 'r')
-                ax0.plot(x, y_0, 'b')
-                ax1.plot(x, y_1, 'b')
-                ax2.plot(x, y_2, 'b')
-                ax3.plot(x, y_3, 'b')
-                ax4.plot(x, y_4, 'b')
-                ax5.plot(x, y_5, 'b')
-                ax6.plot(x, y_6, 'b')
-                ax7.plot(x, y_7, 'b')
+
+                plt.title(device)
+                ax1.plot(x, y_0, label='cpu0 %d'%cpu0_usage, lw=1)
+                ax1.plot(x, y_1, label='cpu1 %d'%cpu1_usage, lw=1)
+                ax1.plot(x, y_2, label='cpu2 %d'%cpu2_usage, lw=1)
+                ax1.plot(x, y_3, label='cpu3 %d'%cpu3_usage, lw=1)
+                ax1.set_xlabel("slave CPUs")
+                ax1.legend(loc='upper left')
+
+                ax2.plot(x, y_4, label='cpu4 %d'%cpu4_usage, lw=1)
+                ax2.plot(x, y_5, label='cpu5 %d'%cpu5_usage, lw=1)
+                ax2.plot(x, y_6, label='cpu6 %d'%cpu6_usage, lw=1)
+                ax2.plot(x, y_7, label='cpu7 %d'%cpu7_usage, lw=1)
+                ax2.plot(x, y, label='cpu %d'%cpu_usage, lw=3)
+                ax2.set_xlabel("Gold CPUs")
+                ax2.legend(loc='upper left')
+
                 plt.pause(0.0001)
                 plt.show()
             time.sleep(time_sleep)
